@@ -17,8 +17,7 @@ export const eventProperties: INodeProperties[] = [
 			{
 				name: 'Get Events',
 				value: 'getEvents',
-				description: 'Get Events',
-				action: 'Get Events',
+				action: 'Get events',
 			},
 			{
 				name: 'Update Event',
@@ -29,8 +28,7 @@ export const eventProperties: INodeProperties[] = [
 			{
 				name: 'Get Event History',
 				value: 'getEventHistory',
-				description: 'Get event history',
-				action: 'Get Event History',
+				action: 'Get event history',
 			},
 		],
 		default: 'getEvents',
@@ -80,7 +78,7 @@ export const eventProperties: INodeProperties[] = [
 		name: 'onlyListings',
 		type: 'boolean',
 		default: false,
-		description: 'Filter events to display only those that are included in listings',
+		description: 'Whether to display only events included in listings',
 		displayOptions: {
 			show: {
 				resource: ['events'],
@@ -262,7 +260,6 @@ export const eventProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		required: false,
 		displayOptions: {
 			show: {
 				resource: ['events'],
@@ -358,7 +355,6 @@ export const eventProperties: INodeProperties[] = [
 		name: 'action',
 		type: 'options',
 		default: 'start',
-		description: 'Action to perform on the event',
 		displayOptions: {
 			show: {
 				resource: ['events'],
@@ -367,16 +363,18 @@ export const eventProperties: INodeProperties[] = [
 			}
 		},
 		options: [
-			{
-				name: 'Start',
-				value: 'start',
-				description: 'Start the event'
-			},
-			{
-				name: 'Stop',
-				value: 'stop',
-				description: 'Stop the event'
-			}
+      {
+        name: 'Start',
+        value: 'start',
+        description: 'Start the event',
+        action: 'Start an event',
+      },
+      {
+        name: 'Stop',
+        value: 'stop',
+        description: 'Stop the event',
+        action: 'Stop an event',
+      }
 		]
 	},
 	{
@@ -503,7 +501,7 @@ export const eventProperties: INodeProperties[] = [
 		}
 	},
 	{
-		displayName: 'Repeat Interval (minutes)',
+		displayName: 'Repeat Interval (Minutes)',
 		name: 'repeatIn',
 		type: 'number',
 		default: 60,
@@ -524,7 +522,6 @@ export const eventProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		required: false,
 		displayOptions: {
 			show: {
 				resource: ['events'],

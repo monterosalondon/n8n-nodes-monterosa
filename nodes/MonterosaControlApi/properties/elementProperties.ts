@@ -12,25 +12,25 @@ export const elementProperties: INodeProperties[] = [
 				name: 'Create Element',
 				value: 'createElement',
 				description: 'Create new element',
-				action: 'Create Element',
+				action: 'Create element',
 			},
 			{
 				name: 'Get Elements',
 				value: 'getElements',
 				description: 'Get all elements of the specified event',
-				action: 'Get Elements',
+				action: 'Get elements',
 			},
 			{
 				name: 'Update Element',
 				value: 'updateElement',
 				description: 'Update existing element',
-				action: 'Update Element',
+				action: 'Update element',
 			},
 			{
 				name: 'Delete Element',
 				value: 'deleteElement',
 				description: 'Delete existing element',
-				action: 'Delete Element',
+				action: 'Delete element',
 			},
 		],
 		default: 'getElements',
@@ -56,43 +56,43 @@ export const elementProperties: INodeProperties[] = [
 		displayName: 'Filter Elements by State',
 		name: 'filterState',
 		type: 'multiOptions',
-		options: [
-			{
-				name: 'Non Scheduled',
-				value: 'non_scheduled',
-				description: 'Retrieve non scheduled elements',
-			},
-			{
-				name: 'Future',
-				value: 'future',
-				description: 'Retrieve future elements',
-			},
-			{
-				name: 'Cancelled',
-				value: 'cancelled',
-				description: 'Retrieve cancelled elements',
-			},
-			{
-				name: 'Current',
-				value: 'current',
-				description: 'Retrieve current elements',
-			},
-			{
-				name: 'On Demand',
-				value: 'on_demand',
-				description: 'Retrieve on demand elements',
-			},
-			{
-				name: 'Past',
-				value: 'past',
-				description: 'Retrieve past elements',
-			},
-			{
-				name: 'Revoked',
-				value: 'revoked',
-				description: 'Retrieve revoked elements',
-			},
-		],
+	options: [
+		{
+			name: 'Cancelled',
+			value: 'cancelled',
+			description: 'Retrieve cancelled elements',
+		},
+		{
+			name: 'Current',
+			value: 'current',
+			description: 'Retrieve current elements',
+		},
+		{
+			name: 'Future',
+			value: 'future',
+			description: 'Retrieve future elements',
+		},
+		{
+			name: 'Non Scheduled',
+			value: 'non_scheduled',
+			description: 'Retrieve non scheduled elements',
+		},
+		{
+			name: 'On Demand',
+			value: 'on_demand',
+			description: 'Retrieve on demand elements',
+		},
+		{
+			name: 'Past',
+			value: 'past',
+			description: 'Retrieve past elements',
+		},
+		{
+			name: 'Revoked',
+			value: 'revoked',
+			description: 'Retrieve revoked elements',
+		},
+	],
 		default: ['non_scheduled'],
 		description: 'Filter elements by state (can select multiple)',
 		displayOptions: {
@@ -106,8 +106,8 @@ export const elementProperties: INodeProperties[] = [
 		displayName: 'Include in Latest Results',
 		name: 'filterLatest',
 		type: 'boolean',
-		default: false,
-		description: 'Filter elements to display only those that are included in latest results',
+	default: false,
+	description: 'Whether to display only elements included in latest results',
 		displayOptions: {
 			show: {
 				resource: ['elements'],
@@ -119,8 +119,8 @@ export const elementProperties: INodeProperties[] = [
 		displayName: 'Include Stats',
 		name: 'includeStats',
 		type: 'boolean',
-		default: false,
-		description: 'Include element stats in the response',
+	default: false,
+	description: 'Whether to include element stats in the response',
 		displayOptions: {
 			show: {
 				resource: ['elements'],
@@ -228,11 +228,11 @@ export const elementProperties: INodeProperties[] = [
 }`,
 	},
 	{
-		displayName: 'Content Type',
+		displayName: 'Content Type Name or ID',
 		name: 'contentTypeParts',
 		type: 'options',
 		required: true,
-		description: 'Select the content type for the element',
+		description: 'Select the content type for the element. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		placeholder: 'Select Content Type',
 		options: [],
 		typeOptions: {
@@ -275,7 +275,7 @@ export const elementProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Duration (seconds)',
+		displayName: 'Duration (Seconds)',
 		name: 'duration',
 		type: 'number',
 		default: 45,
@@ -289,7 +289,7 @@ export const elementProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Offset (seconds)',
+		displayName: 'Offset (Seconds)',
 		name: 'offset',
 		type: 'number',
 		default: 0,
@@ -459,6 +459,24 @@ export const elementProperties: INodeProperties[] = [
 		},
 		options: [
 			{
+				displayName: 'Certification',
+				name: 'certification',
+				type: 'boolean',
+				default: false,
+			},
+			{
+				displayName: 'Include in Latest Results',
+				name: 'includeInLatestResults',
+				type: 'boolean',
+				default: true,
+			},
+			{
+				displayName: 'Max Options Per Vote',
+				name: 'maxOptionsPerVote',
+				type: 'number',
+				default: 1,
+			},
+			{
 				displayName: 'Max Votes Per User',
 				name: 'maxVotesPerUser',
 				type: 'number',
@@ -471,26 +489,8 @@ export const elementProperties: INodeProperties[] = [
 				default: 1,
 			},
 			{
-				displayName: 'Max Options Per Vote',
-				name: 'maxOptionsPerVote',
-				type: 'number',
-				default: 1,
-			},
-			{
 				displayName: 'Require Verified User',
 				name: 'requireVerifiedUser',
-				type: 'boolean',
-				default: false,
-			},
-			{
-				displayName: 'Include in Latest Results',
-				name: 'includeInLatestResults',
-				type: 'boolean',
-				default: true,
-			},
-			{
-				displayName: 'Certification',
-				name: 'certification',
 				type: 'boolean',
 				default: false,
 			},
@@ -531,38 +531,43 @@ export const elementProperties: INodeProperties[] = [
 		type: 'options',
 		options: [
 			{
-				name: 'Update Attributes',
-				value: 'update',
-				description: 'Update element attributes',
-			},
-			{
-				name: 'Stop',
-				value: 'stop',
-				description: 'Stop an active element',
+				name: 'Publish',
+				value: 'publish',
+				description: 'Publish an element',
+				action: 'Publish an elements',
 			},
 			{
 				name: 'Reveal Answer',
 				value: 'reveal_answer',
 				description: 'Reveal the answer of a quiz-element',
+				action: 'Reveal answer an elements',
 			},
 			{
 				name: 'Reveal Results',
 				value: 'reveal_results',
 				description: 'Reveal results of an element',
+				action: 'Reveal results an elements',
 			},
 			{
 				name: 'Revoke',
 				value: 'revoke',
 				description: 'Revoke an element',
+				action: 'Revoke an elements',
 			},
 			{
-				name: 'Publish',
-				value: 'publish',
-				description: 'Publish an element',
+				name: 'Stop',
+				value: 'stop',
+				description: 'Stop an active element',
+				action: 'Stop an elements',
+			},
+			{
+				name: 'Update Attributes',
+				value: 'update',
+				description: 'Update element attributes',
+				action: 'Update attributes an elements',
 			},
 		],
 		default: 'update',
-		description: 'Action to perform on the element',
 		displayOptions: {
 			show: {
 				resource: ['elements'],
@@ -593,22 +598,6 @@ export const elementProperties: INodeProperties[] = [
 				description: 'Element duration in seconds',
 			},
 			{
-				displayName: 'Start Mode',
-				name: 'startMode',
-				type: 'options',
-				options: [
-					{
-						name: 'Manual',
-						value: 'manual',
-					},
-					{
-						name: 'Timecode',
-						value: 'timecode',
-					},
-				],
-				default: 'manual',
-			},
-			{
 				displayName: 'Offset',
 				name: 'offset',
 				type: 'number',
@@ -619,52 +608,6 @@ export const elementProperties: INodeProperties[] = [
 						startMode: ['timecode'],
 					},
 				},
-			},
-			{
-				displayName: 'Question',
-				name: 'question',
-				type: 'collection',
-				default: {},
-				options: [
-					{
-						displayName: 'Question Text',
-						name: 'text',
-						type: 'string',
-						default: '',
-					},
-					{
-						displayName: 'Custom Fields',
-						name: 'customFields',
-						type: 'fixedCollection',
-						typeOptions: {
-							multipleValues: true,
-						},
-						default: {},
-						description: 'Add custom key-value pairs for the question',
-						options: [
-							{
-								name: 'field',
-								displayName: 'Field',
-								values: [
-									{
-										displayName: 'Key',
-										name: 'key',
-										type: 'string',
-										default: '',
-										description: 'Field key',
-									},
-									{
-										displayName: 'Value',
-										name: 'value',
-										type: 'string',
-										default: '',
-										description: 'Field value',
-									},
-								],
-							},
-						],
-					},
-				],
 			},
 			{
 				displayName: 'Options',
@@ -722,76 +665,138 @@ export const elementProperties: INodeProperties[] = [
 				],
 			},
 			{
-				displayName: 'Voting Settings',
-				name: 'votingSettings',
+				displayName: 'Question',
+				name: 'question',
 				type: 'collection',
 				default: {},
 				options: [
 					{
-						displayName: 'Max Votes Per User',
-						name: 'maxVotesPerUser',
-						type: 'number',
-						default: 1,
+						displayName: 'Question Text',
+						name: 'text',
+						type: 'string',
+						default: '',
 					},
 					{
-						displayName: 'Min Options Per Vote',
-						name: 'minOptionsPerVote',
-						type: 'number',
-						default: 1,
-					},
-					{
-						displayName: 'Max Options Per Vote',
-						name: 'maxOptionsPerVote',
-						type: 'number',
-						default: 1,
-					},
-					{
-						displayName: 'Require Verified User',
-						name: 'requireVerifiedUser',
-						type: 'boolean',
-						default: false,
-					},
-					{
-						displayName: 'Include in Latest Results',
-						name: 'includeInLatestResults',
-						type: 'boolean',
-						default: true,
-					},
-					{
-						displayName: 'Certification',
-						name: 'certification',
-						type: 'boolean',
-						default: false,
-					},
-					{
-						displayName: 'Reveal Results Mode',
-						name: 'revealResultsMode',
-						type: 'options',
+						displayName: 'Custom Fields',
+						name: 'customFields',
+						type: 'fixedCollection',
+						typeOptions: {
+							multipleValues: true,
+						},
+						default: {},
+						description: 'Add custom key-value pairs for the question',
 						options: [
 							{
-								name: 'Vote',
-								value: 'vote',
-							},
-							{
-								name: 'Close',
-								value: 'close',
-							},
-							{
-								name: 'Event End',
-								value: 'event_end',
-							},
-							{
-								name: 'Never',
-								value: 'never',
-							},
-							{
-								name: 'Manual',
-								value: 'manual',
+								name: 'field',
+								displayName: 'Field',
+								values: [
+									{
+										displayName: 'Key',
+										name: 'key',
+										type: 'string',
+										default: '',
+										description: 'Field key',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Field value',
+									},
+								],
 							},
 						],
-						default: 'manual',
 					},
 				],
+			},
+			{
+				displayName: 'Start Mode',
+				name: 'startMode',
+				type: 'options',
+				options: [
+					{
+						name: 'Manual',
+						value: 'manual',
+					},
+					{
+						name: 'Timecode',
+						value: 'timecode',
+					},
+				],
+				default: 'manual',
+			},
+			{
+				displayName: 'Voting Settings',
+				name: 'votingSettings',
+				type: 'collection',
+				default: {},
+			options: [
+				{
+					displayName: 'Certification',
+					name: 'certification',
+					type: 'boolean',
+					default: false,
+				},
+				{
+					displayName: 'Include in Latest Results',
+					name: 'includeInLatestResults',
+					type: 'boolean',
+					default: true,
+				},
+				{
+					displayName: 'Max Options Per Vote',
+					name: 'maxOptionsPerVote',
+					type: 'number',
+					default: 1,
+				},
+				{
+					displayName: 'Max Votes Per User',
+					name: 'maxVotesPerUser',
+					type: 'number',
+					default: 1,
+				},
+				{
+					displayName: 'Min Options Per Vote',
+					name: 'minOptionsPerVote',
+					type: 'number',
+					default: 1,
+				},
+				{
+					displayName: 'Require Verified User',
+					name: 'requireVerifiedUser',
+					type: 'boolean',
+					default: false,
+				},
+				{
+					displayName: 'Reveal Results Mode',
+					name: 'revealResultsMode',
+					type: 'options',
+					options: [
+						{
+							name: 'Close',
+							value: 'close',
+						},
+						{
+							name: 'Event End',
+							value: 'event_end',
+						},
+						{
+							name: 'Manual',
+							value: 'manual',
+						},
+						{
+							name: 'Never',
+							value: 'never',
+						},
+						{
+							name: 'Vote',
+							value: 'vote',
+						},
+					],
+					default: 'manual',
+				},
+			],
 			},
 		],
 	},

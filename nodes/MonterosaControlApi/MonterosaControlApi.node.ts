@@ -29,7 +29,7 @@ export class MonterosaControlApi implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Monterosa Automation',
 		name: 'monterosaControlApi',
-		icon: 'file:monterosa.png',
+			icon: 'file:monterosa.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
@@ -70,7 +70,7 @@ export class MonterosaControlApi implements INodeType {
 						value: 'elements',
 					},
 					{
-						name: 'Listings',
+						name: 'Listing',
 						value: 'listings',
 					},
 					{
@@ -97,7 +97,7 @@ export class MonterosaControlApi implements INodeType {
 					}) as string;
 					if (!projectID) {
 						return [{
-							name: 'Please enter a Project ID and try again.',
+							name: 'Please Enter a Project ID and Try Again.',
 							value: '',
 						}]
 					}

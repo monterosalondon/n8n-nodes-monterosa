@@ -10,6 +10,7 @@ export const listingProperties: INodeProperties[] = [
 			{
 				name: 'Get Listings',
 				value: 'getListings',
+				action: 'Get listings',
 			},
 		],
 		default: 'getListings',
