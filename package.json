@@ -1,0 +1,65 @@
+{
+  "name": "n8n-nodes-monterosa",
+  "version": "0.1.0",
+  "description": "Use n8n to control your Monterosa experiences.",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/monterosa/n8n-nodes-monterosa#readme",
+  "author": "Monterosa <info@monterosa.co> (https://monterosa.co)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monterosa/n8n-nodes-monterosa.git"
+  },
+  "engines": {
+    "node": ">=18.10",
+    "pnpm": ">=9.1"
+  },
+  "packageManager": "pnpm@9.1.4",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json",
+    "package": "node package-for-deploy.js",
+    "package:build": "pnpm build && pnpm package"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/ExampleCredentialsApi.credentials.js",
+      "dist/credentials/HttpBinApi.credentials.js",
+      "dist/credentials/MonterosaControlApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/ExampleNode/ExampleNode.node.js",
+      "dist/nodes/HttpBin/HttpBin.node.js",
+      "dist/nodes/MonterosaControlApi/MonterosaControlApi.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "gulp": "^4.0.2",
+    "n8n-workflow": "*",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "@types/node": "^22.12.0"
+  },
+  "bugs": {
+    "url": "https://github.com/monterosa/n8n-nodes-monterosa/issues"
+  }
+}

@@ -1,2 +1,7 @@
 node_modules
 dist/*
+deploy/.DS_Store
+nodes/.DS_Store
+nodes/MonterosaControlApi/.DS_Store
+.DS_Store
+n8n-nodes-monterosa-0.1.0.tgz

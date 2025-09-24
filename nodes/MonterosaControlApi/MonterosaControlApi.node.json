@@ -1,0 +1,21 @@
+{
+	"node": "n8n-nodes-base.monterosa-control-api",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Development",
+		"Developer Tools"
+	],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://products.monterosa.co/mic/control-api/overview"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://monterosa.co/"
+			}
+		]
+	}
+}
