@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-monterosa",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Use n8n to control your Monterosa experiences.",
   "keywords": [
     "n8n-community-node-package"
@@ -53,8 +53,5 @@
   },
   "bugs": {
     "url": "https://github.com/monterosa/n8n-nodes-monterosa/issues"
-  },
-  "dependencies": {
-    "save": "^2.9.0"
   }
 }
