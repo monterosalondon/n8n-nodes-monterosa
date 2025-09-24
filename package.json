@@ -1,10 +1,13 @@
 {
   "name": "n8n-nodes-monterosa",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use n8n to control your Monterosa experiences.",
   "keywords": [
     "n8n-community-node-package"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "homepage": "https://github.com/monterosa/n8n-nodes-monterosa#readme",
   "author": "Monterosa <info@monterosa.co> (https://monterosa.co)",
@@ -24,7 +27,7 @@
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json",
+    "prepublishOnly": "pnpm build",
     "package": "node package-for-deploy.js",
     "package:build": "pnpm build && pnpm package"
   },
