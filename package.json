@@ -9,14 +9,14 @@
     "access": "public"
   },
   "license": "MIT",
-  "homepage": "https://github.com/monterosa/n8n-nodes-monterosa#readme",
+  "homepage": "https://github.com/monterosalondon/n8n-nodes-monterosa#readme",
   "author": {
     "name": "Monterosa",
     "email": "info@monterosa.co"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/monterosa/n8n-nodes-monterosa.git"
+    "url": "git+https://github.com/monterosalondon/n8n-nodes-monterosa.git"
   },
   "engines": {
     "node": ">=20.15"
@@ -56,6 +56,6 @@
     "n8n-workflow": "*"
   },
   "bugs": {
-    "url": "https://github.com/monterosa/n8n-nodes-monterosa/issues"
+    "url": "https://github.com/monterosalondon/n8n-nodes-monterosa/issues"
   }
 }
