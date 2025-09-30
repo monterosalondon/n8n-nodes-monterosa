@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-monterosa",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Use n8n to control your Monterosa experiences.",
   "keywords": [
     "n8n-community-node-package"
@@ -9,7 +9,7 @@
     "access": "public"
   },
   "license": "MIT",
-  "homepage": "https://github.com/monterosalondon/n8n-nodes-monterosa#readme",
+  "homepage": "https://github.com/monterosalondon/n8n-nodes-monterosa",
   "author": {
     "name": "Monterosa",
     "email": "info@monterosa.co"
