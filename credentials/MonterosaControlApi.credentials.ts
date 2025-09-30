@@ -1,4 +1,9 @@
-import { ICredentialType, INodeProperties } from 'n8n-workflow';
+import {
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class MonterosaControlApi implements ICredentialType {
 	name = 'monterosaControlApi';
@@ -38,4 +43,25 @@ export class MonterosaControlApi implements ICredentialType {
 			required: true,
 		},
 	];
+
+	authenticate: IAuthenticateGeneric = {
+		type: 'generic',
+		properties: {
+			headers: {
+				Authorization: '={{ "Bearer " + $credentials.accessToken }}',
+			},
+		},
+	};
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL:
+				'={{ $credentials.environment === "eu" ? "https://studio.monterosa.cloud" : "https://studio-" + $credentials.environment + ".monterosa.cloud" }}',
+			url: '/api/v2/projects',
+			method: 'GET',
+			headers: {
+				Authorization: '={{ "Bearer " + $credentials.accessToken }}',
+			},
+		},
+	};
 }
