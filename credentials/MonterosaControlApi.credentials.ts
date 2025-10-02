@@ -57,7 +57,7 @@ export class MonterosaControlApi implements ICredentialType {
 		request: {
 			baseURL:
 				'={{ $credentials.environment === "eu" ? "https://studio.monterosa.cloud" : "https://studio-" + $credentials.environment + ".monterosa.cloud" }}',
-			url: '/api/v2/projects',
+			url: '/api/v2/me',
 			method: 'GET',
 			headers: {
 				Authorization: '={{ "Bearer " + $credentials.accessToken }}',
