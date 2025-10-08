@@ -45,6 +45,7 @@ export class MonterosaControlApi implements INodeType {
 				required: true,
 			},
 		],
+		usableAsTool: true,
 		properties: [
 			{
 				displayName: 'Project ID',

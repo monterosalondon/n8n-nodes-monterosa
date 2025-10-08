@@ -3,11 +3,15 @@ import {
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
+	Icon,
 } from 'n8n-workflow';
 
 export class MonterosaControlApi implements ICredentialType {
 	name = 'monterosaControlApi';
 	displayName = 'Monterosa Control API';
+	description = 'Interact with Monterosa Control API';
+	
+	icon: Icon = 'file:monterosa.svg';
 	documentationUrl = 'https://products.monterosa.co/mic/control-api/overview'; // Optional documentation URL
 
 	properties: INodeProperties[] = [
@@ -44,24 +48,20 @@ export class MonterosaControlApi implements ICredentialType {
 		},
 	];
 
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				Authorization: '={{ "Bearer " + $credentials.accessToken }}',
-			},
-		},
-	};
-
+    authenticate: IAuthenticateGeneric = {
+        type: 'generic',
+        properties: {
+            headers: {
+                Authorization: '={{ "Bearer " + $credentials.accessToken }}',
+            },
+        },
+    };
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL:
 				'={{ $credentials.environment === "eu" ? "https://studio.monterosa.cloud" : "https://studio-" + $credentials.environment + ".monterosa.cloud" }}',
 			url: '/api/v2/me',
 			method: 'GET',
-			headers: {
-				Authorization: '={{ "Bearer " + $credentials.accessToken }}',
-			},
-		},
+		}
 	};
 }
