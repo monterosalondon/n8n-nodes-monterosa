@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-monterosa",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Use n8n to control your Monterosa experiences.",
   "keywords": [
     "n8n-community-node-package"
