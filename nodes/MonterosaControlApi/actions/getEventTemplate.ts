@@ -1,6 +1,11 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 export async function executeGetEventTemplate(this: IExecuteFunctions, index: number) {
 	const credentials = (await this.getCredentials(
@@ -10,21 +15,27 @@ export async function executeGetEventTemplate(this: IExecuteFunctions, index: nu
 
 	const eventTemplateId = this.getNodeParameter('eventTemplateId', index) as string;
 	if (!eventTemplateId) {
-		throw new Error('Event Template ID is required');
+		throw new NodeOperationError(this.getNode(), 'Event Template ID is required');
 	}
 
 	try {
-		const responseData = await this.helpers.httpRequest({
-			method: 'GET',
-			url: `${getUrl(credentials.environment.toString())}/api/v2/event_templates/${eventTemplateId}`,
-			headers: {
-				Authorization: `Bearer ${credentials.accessToken}`,
-				'Content-Type': 'application/vnd.api+json',
-				Accept: 'application/json',
+		const responseData = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'monterosaControlApi',
+			{
+				method: 'GET',
+				url: `${getUrl(credentials.environment.toString())}/api/v2/event_templates/${eventTemplateId}`,
+				headers: {
+					'Content-Type': 'application/vnd.api+json',
+					Accept: 'application/json',
+				},
 			},
-		});
+		);
 		return responseData;
 	} catch (error) {
-		throw monterosaHttpException(error, {}, 'get');
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to fetch event template',
+			description: getMonterosaErrorDescription(error),
+		});
 	}
 } 

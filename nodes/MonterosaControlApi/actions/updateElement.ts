@@ -1,8 +1,14 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
-import { IDataObject, INodeExecutionData } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	IDataObject,
+	INodeExecutionData,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
 import { createLocalizedValues, LocalizationType } from '../helpers/localization';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 interface ElementAttributes {
 	duration?: number;
@@ -62,9 +68,13 @@ export async function executeUpdateElement(
 		'monterosaControlApi',
 		index,
 	)) as ICredentialDataDecryptedObject;	
-    const elementId = this.getNodeParameter('elementId', index) as string;
+	const elementId = this.getNodeParameter('elementId', index) as string;
 	const action = this.getNodeParameter('action', index) as string;
 	const localization = this.getNodeParameter('localization', index, 'en') as LocalizationType;
+
+	if (!elementId) {
+		throw new NodeOperationError(this.getNode(), 'Element ID is required');
+	}
 
 	const requestBody: ElementRequestBody = {
 		data: {
@@ -204,23 +214,28 @@ export async function executeUpdateElement(
 			break;
 
 		default:
-			throw new Error(`Unsupported action: ${action}`);
+			throw new NodeOperationError(this.getNode(), `Unsupported action: ${action}`);
 	}
 
 	try {
-		const response = await this.helpers.httpRequest({
-			method: 'PATCH',
-			url: `${getUrl(credentials.environment.toString())}/api/v2/elements/${elementId}`,
-			headers: {
-				Authorization: `Bearer ${credentials.accessToken}`,
-				'Content-Type': 'application/vnd.api+json',
-				Accept: 'application/json',
+		const response = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'monterosaControlApi',
+			{
+				method: 'PATCH',
+				url: `${getUrl(credentials.environment.toString())}/api/v2/elements/${elementId}`,
+				headers: {
+					'Content-Type': 'application/vnd.api+json',
+					Accept: 'application/json',
+				},
+				body: requestBody,
 			},
-			body: requestBody,
-		});
-		console.log(response);
-		return [{  json: { id: elementId, message: 'Element updated successfully' } }];
+		);
+		return [{ json: { id: elementId, message: 'Element updated successfully', response } }];
 	} catch (error) {
-		throw monterosaHttpException(error, requestBody, 'update');
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to update element',
+			description: getMonterosaErrorDescription(error),
+		});
 	}
 }

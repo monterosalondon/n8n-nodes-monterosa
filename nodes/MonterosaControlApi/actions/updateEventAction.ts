@@ -1,7 +1,12 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
 import { createLocalizedValues, LocalizationType } from '../helpers/localization';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 export async function executeUpdateEventAction(this: IExecuteFunctions, index: number) {
     const credentials = (await this.getCredentials(
@@ -43,13 +48,13 @@ export async function executeUpdateEventAction(this: IExecuteFunctions, index: n
         // Only get end time if not manual start mode
         if (eventStartMode !== 'manual') {
             const eventEndsAt = this.getNodeParameter('eventEndsAt', index, 0) as string;
-            if (eventEndsAt === '') {
-                throw new Error('Event end time is required for clock start mode');
+        if (eventEndsAt === '') {
+            throw new NodeOperationError(this.getNode(), 'Event end time is required for clock start mode');
             }
             const endDate = new Date(eventEndsAt);
 
             if (endDate <= startDate) {
-                throw new Error('Event end time must be after event start time');
+            throw new NodeOperationError(this.getNode(), 'Event end time must be after event start time');
             }
 
             eventDuration = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
@@ -85,7 +90,10 @@ export async function executeUpdateEventAction(this: IExecuteFunctions, index: n
             eventId: eventId,
             message: 'Event updated successfully'
         }
-    } catch (e) {
-        throw monterosaHttpException(e, data, 'update');
+	} catch (error) {
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to update event',
+			description: getMonterosaErrorDescription(error),
+		});
     }
 }

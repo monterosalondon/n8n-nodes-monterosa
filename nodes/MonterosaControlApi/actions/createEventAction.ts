@@ -1,7 +1,12 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
 import { createLocalizedValues, LocalizationType } from '../helpers/localization';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 export async function executeCreateEventAction(this: IExecuteFunctions, index: number) {
     const credentials = (await this.getCredentials(
@@ -23,13 +28,13 @@ export async function executeCreateEventAction(this: IExecuteFunctions, index: n
         const eventEndsAt = this.getNodeParameter('eventEndsAt', index, 0) as string;
         //if eventEndsAt is empty, throw an error
         if (eventEndsAt === '') {
-            throw new Error('Event end time is required for clock start mode');
+            throw new NodeOperationError(this.getNode(), 'Event end time is required for clock start mode');
         }
         const endDate = new Date(eventEndsAt);
 
         // Validate that end date is after start date
         if (endDate <= startDate) {
-            throw new Error('Event end time must be after event start time');
+            throw new NodeOperationError(this.getNode(), 'Event end time must be after event start time');
         }
 
         // Calculate duration in milliseconds and convert to seconds
@@ -62,18 +67,24 @@ export async function executeCreateEventAction(this: IExecuteFunctions, index: n
     };
 
     try {
-        const responseData = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${getUrl(credentials.environment.toString())}/api/v2/events`,
-            headers: {
-                Authorization: `Bearer ${credentials.accessToken}`,
-                Accept: 'application/json',
-                'Content-Type': 'application/vnd.api+json',
+        const responseData = await this.helpers.httpRequestWithAuthentication.call(
+            this,
+            'monterosaControlApi',
+            {
+                method: 'POST',
+                url: `${getUrl(credentials.environment.toString())}/api/v2/events`,
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/vnd.api+json',
+                },
+                body: data,
             },
-            body: data
-        });
+        );
         return responseData;
-    } catch (e) {
-        throw  monterosaHttpException(e);
+    } catch (error) {
+        throw new NodeApiError(this.getNode(), error, {
+            message: 'Failed to create event',
+            description: getMonterosaErrorDescription(error),
+        });
     }
 }

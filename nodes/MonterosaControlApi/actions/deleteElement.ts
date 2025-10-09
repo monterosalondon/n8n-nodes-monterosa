@@ -1,6 +1,11 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 
 export async function executeDeleteElement(this: IExecuteFunctions, index: number) {
@@ -11,20 +16,26 @@ export async function executeDeleteElement(this: IExecuteFunctions, index: numbe
 
 	const elementId = this.getNodeParameter('elementId', index) as string;
 	if (!elementId) {
-		throw new Error('Element ID is required');
+		throw new NodeOperationError(this.getNode(), 'Element ID is required');
 	}
 	try {
-		await this.helpers.httpRequest({
-			method: 'DELETE',
-			url: `${getUrl(credentials.environment.toString())}/api/v2/elements/${elementId}`,
-			headers: {
-				Authorization: `Bearer ${credentials.accessToken}`,
-				'Content-Type': 'application/vnd.api+json',
-				Accept: 'application/json',
+		await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'monterosaControlApi',
+			{
+				method: 'DELETE',
+				url: `${getUrl(credentials.environment.toString())}/api/v2/elements/${elementId}`,
+				headers: {
+					'Content-Type': 'application/vnd.api+json',
+					Accept: 'application/json',
+				},
 			},
-		});
+		);
 		return [{ json: { id: elementId, message: 'Element deleted successfully' } }];
 	} catch (error) {
-		throw monterosaHttpException(error, {}, 'delete');
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to delete element',
+			description: getMonterosaErrorDescription(error),
+		});
 	}
 }

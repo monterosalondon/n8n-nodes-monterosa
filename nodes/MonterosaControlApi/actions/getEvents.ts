@@ -1,5 +1,10 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 export async function executeGetEvents(this: IExecuteFunctions, index: number) {
 	const credentials = (await this.getCredentials(
 		'monterosaControlApi',
@@ -35,14 +40,24 @@ export async function executeGetEvents(this: IExecuteFunctions, index: number) {
 
 	const queryParams = new URLSearchParams(queryParamsObj).toString();
 
-	const responseData = await this.helpers.httpRequest({
-		method: 'GET',
-		url: `${getUrl(credentials.environment.toString())}/api/v2/projects/${projectId}/events?${queryParams}`,
-		headers: {
-			Authorization: `Bearer ${credentials.accessToken}`,
-			Accept: 'application/json',
-		},
-	});
+	try {
+		const responseData = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'monterosaControlApi',
+			{
+				method: 'GET',
+				url: `${getUrl(credentials.environment.toString())}/api/v2/projects/${projectId}/events?${queryParams}`,
+				headers: {
+					Accept: 'application/json',
+				},
+			},
+		);
 
-	return responseData;
+		return responseData;
+	} catch (error) {
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to fetch events',
+			description: getMonterosaErrorDescription(error),
+		});
+	}
 }

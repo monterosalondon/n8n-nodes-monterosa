@@ -1,7 +1,12 @@
-import { ICredentialDataDecryptedObject, IExecuteFunctions } from 'n8n-workflow';
+import {
+	ICredentialDataDecryptedObject,
+	IExecuteFunctions,
+	NodeApiError,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { getUrl } from '../helpers/getUrl';
 import { createLocalizedValues, LocalizationType } from '../helpers/localization';
-import { monterosaHttpException } from '../helpers/monterosaHttpException';
+import { getMonterosaErrorDescription } from '../helpers/getMonterosaErrorDescription';
 
 interface ElementAttributes {
 	content_type: string;
@@ -90,19 +95,11 @@ export async function executeCreateElement(this: IExecuteFunctions, index: numbe
 
 	if (useCustomJson) {
 		const customJson = this.getNodeParameter('customJson', index) as string;
-		try {
-			requestBody = JSON.parse(customJson);
-		} catch (error) {
-			// Create a more descriptive error message for the n8n UI
-			const errorDetails = error.response?.data?.errors?.map((err: any) => {
-				const field = err.source?.pointer?.split('/').pop() || 'unknown field';
-				return `${field}: ${err.detail}`;
-			}).join(', ') || error.message;
-			
-			const errorMessage = `Failed to create element (${error.response?.status}): ${errorDetails}`;
-			
-			throw new Error(errorMessage);
-		}
+        try {
+            requestBody = JSON.parse(customJson);
+        } catch {
+            throw new NodeOperationError(this.getNode(), 'Invalid JSON for custom element payload');
+        }
 	} else {
 		const eventId = this.getNodeParameter('eventId', index) as string;
 		const contentTypeParts = this.getNodeParameter('contentTypeParts', index) as string;
@@ -146,23 +143,23 @@ export async function executeCreateElement(this: IExecuteFunctions, index: numbe
 		const correctOptionIndex = this.getNodeParameter('correctOptionIndex', index, 0) as number;
 
 		// Validate required fields
-		if (!eventId) {
-			throw new Error('Event ID is required');
+        if (!eventId) {
+            throw new NodeOperationError(this.getNode(), 'Event ID is required');
 		}
-		if (!contentType) {
-			throw new Error('Content Type is required');
+        if (!contentType) {
+            throw new NodeOperationError(this.getNode(), 'Content Type is required');
 		}
-		if (!startMode) {
-			throw new Error('Start Mode is required');
+        if (!startMode) {
+            throw new NodeOperationError(this.getNode(), 'Start Mode is required');
 		}
-		if (!duration) {
-			throw new Error('Duration is required');
+        if (!duration) {
+            throw new NodeOperationError(this.getNode(), 'Duration is required');
 		}
-		if (!question?.text) {
-			throw new Error('Question Text is required');
+        if (!question?.text) {
+            throw new NodeOperationError(this.getNode(), 'Question Text is required');
 		}
-		if (!options?.option || options.option.length === 0) {
-			throw new Error('At least one option is required');
+        if (!options?.option || options.option.length === 0) {
+            throw new NodeOperationError(this.getNode(), 'At least one option is required');
 		}
 
 		// Build the request body
@@ -279,19 +276,25 @@ export async function executeCreateElement(this: IExecuteFunctions, index: numbe
 	}
 
 	try {
-		const responseData = await this.helpers.httpRequest({
-			method: 'POST',
-			url: `${getUrl(credentials.environment.toString())}/api/v2/elements`,
-			headers: {
-				Authorization: `Bearer ${credentials.accessToken}`,
-				'Content-Type': 'application/vnd.api+json',
-				Accept: 'application/json',
+		const responseData = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'monterosaControlApi',
+			{
+				method: 'POST',
+				url: `${getUrl(credentials.environment.toString())}/api/v2/elements`,
+				headers: {
+					'Content-Type': 'application/vnd.api+json',
+					Accept: 'application/json',
+				},
+				body: requestBody,
 			},
-			body: requestBody,
-		});
+		);
 
 		return responseData;
 	} catch (error) {
-		throw monterosaHttpException(error, requestBody, 'create');
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'Failed to create element',
+			description: getMonterosaErrorDescription(error),
+		});
 	}
 }

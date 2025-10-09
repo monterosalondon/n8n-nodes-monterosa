@@ -5,6 +5,7 @@ import {
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
+	NodeApiError,
 	NodeConnectionType,
 } from 'n8n-workflow';
 
@@ -90,99 +91,71 @@ export class MonterosaControlApi implements INodeType {
 	};
 	methods = {
 		loadOptions: {
-			getElementContentTypes: async function(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-				try {
-					const credentials = await (this.getCredentials('monterosaControlApi'));
-					const projectID = this.getNodeParameter('projectID', null,{
-						
-					}) as string;
-					if (!projectID) {
-						return [{
+			getElementContentTypes: async function (this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const projectID = this.getNodeParameter('projectID', null, {}) as string;
+				if (!projectID) {
+					return [
+						{
 							name: 'Please Enter a Project ID and Try Again.',
 							value: '',
-						}]
-					}
-					const response = await fetch(`${getUrl(credentials.environment.toString())}/api/v2/projects/${projectID}`, {
-						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': `Bearer ${credentials.accessToken}`
-						}
-					});
+						},
+					];
+				}
 
-					if (!response.ok) {
-						return [{
-							name: `Failed to fetch project data. Please check your Project ID and credentials. (Status: ${response.status})`,
-							value: '',
-						}];
-					}
+				const credentials = (await this.getCredentials('monterosaControlApi')) as {
+					environment?: string;
+				};
+				const environment = credentials?.environment?.toString() ?? 'us';
+				const baseUrl = getUrl(environment);
 
-					const projectResponse = (await response.json()) as any;
-					if(projectResponse.error) {
-						return [{
-							name: `Project error: ${projectResponse.error}`,
-							value: '',
-						}];
-					}
+				try {
+					const projectResponse = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'monterosaControlApi',
+						{
+							method: 'GET',
+							url: `${baseUrl}/api/v2/projects/${projectID}`,
+							json: true,
+						},
+					)) as any;
 
 					const projectData = projectResponse.data;
-					const appID = projectData.relationships.app.data.id;
-					const appDataRequest = await fetch(`${getUrl(credentials.environment.toString())}/api/v2/apps/${appID}`, {
-						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': `Bearer ${credentials.accessToken}`
-						}
-					});
+					const appId = projectData.relationships.app.data.id;
 
-					if (!appDataRequest.ok) {
-						return [{
-							name: `Failed to fetch app data. Please try again later. (Status: ${appDataRequest.status})`,
-							value: '',
-						}];
-					}
-
-					const appData = (await appDataRequest.json()) as any;
-					if(appData.error) {
-						return [{
-							name: `App error: ${appData.error}`,
-							value: '',
-						}];
-					}
+					const appData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'monterosaControlApi',
+						{
+							method: 'GET',
+							url: `${baseUrl}/api/v2/apps/${appId}`,
+							json: true,
+						},
+					)) as any;
 
 					const specUrl = appData.data.attributes.spec_url.replace('spec.json', 'elements.json');
-					const specResponse = await fetch(specUrl, {
+					const specData = (await this.helpers.httpRequest({
 						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
+						url: specUrl,
+						json: true,
+					})) as any[];
 
-					if (!specResponse.ok) {
-						return [{
-							name: `Failed to fetch element types. Please try again later. (Status: ${specResponse.status})`,
-							value: '',
-						}];
-					}
-
-					const specData = (await specResponse.json()) as any[];
 					return [
 						{
 							name: 'Please Select a Content Type',
 							value: '',
 						},
 						...specData.map((element: any) => ({
-							name: element.derived_from 
+							name: element.derived_from
 								? `${element.name} - (${element.derived_from.charAt(0).toUpperCase() + element.derived_from.slice(1)})`
 								: element.name,
 							value: `${element.content_type}|${element.derived_from}`,
-						}))
+						})),
 					];
 				} catch (error) {
-					return [{
-						name: `Failed to load element types. Please check your connection and try again.`,
-						value: '',
-					}];
+					throw new NodeApiError(this.getNode(), error, {
+						message: 'Failed to load element types',
+						description: 'The Monterosa API request for element content types was not successful.',
+					});
 				}
 			},
 		},
@@ -238,8 +211,14 @@ export class MonterosaControlApi implements INodeType {
 				}
 			}
 
-			if (responseData) {
-				returnData.push({ json: responseData });
+			if (Array.isArray(responseData)) {
+				responseData.forEach((data) => {
+					returnData.push({ json: data, pairedItem: { item: i } });
+				});
+			} else if (responseData) {
+				returnData.push({ json: responseData, pairedItem: { item: i } });
+			} else {
+				returnData.push({ json: {}, pairedItem: { item: i } });
 			}
 		}
 
